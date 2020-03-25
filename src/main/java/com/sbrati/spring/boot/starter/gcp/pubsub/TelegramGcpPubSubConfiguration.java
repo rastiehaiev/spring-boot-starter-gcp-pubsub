@@ -37,7 +37,7 @@ public class TelegramGcpPubSubConfiguration {
                             log.warn("Null payload received: {}.", ackPubsubMessage.getPubsubMessage());
                         }
                     } catch (Exception e) {
-                        log.error("Error while processing message {}.", ackPubsubMessage);
+                        log.error("Error while processing message {}.", ackPubsubMessage, e);
                     } finally {
                         ackPubsubMessage.ack();
                     }
