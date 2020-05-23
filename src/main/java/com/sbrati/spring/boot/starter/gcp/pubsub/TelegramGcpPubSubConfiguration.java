@@ -1,6 +1,5 @@
 package com.sbrati.spring.boot.starter.gcp.pubsub;
 
-import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.sbrati.telegram.domain.Event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,11 +8,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -50,11 +47,6 @@ public class TelegramGcpPubSubConfiguration {
                 log.info("Subscribed to [{}].", subscription);
             }
         }
-    }
-
-    @Bean
-    public TopicAdminClient topicAdminClient() throws IOException {
-        return TopicAdminClient.create();
     }
 
     @Autowired(required = false)
