@@ -53,6 +53,7 @@ public abstract class GcpPubSubSubscriber<T> {
 
     @PostConstruct
     private void initializeSubscription() {
+        Utils.initializeTopic(pubSubAdmin, topicName);
         this.subscriptionName = topicName + "-subscription";
         try {
             pubSubAdmin.createSubscription(subscriptionName, topicName);
