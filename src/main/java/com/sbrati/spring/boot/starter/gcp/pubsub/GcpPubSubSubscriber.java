@@ -3,6 +3,7 @@ package com.sbrati.spring.boot.starter.gcp.pubsub;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.gax.rpc.AlreadyExistsException;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
 import com.sbrati.telegram.domain.Event;
@@ -10,9 +11,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gcp.pubsub.PubSubAdmin;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -20,15 +21,15 @@ import java.util.Map;
 public abstract class GcpPubSubSubscriber<T> {
 
     private final Class<T> type;
-    private final String subscriptionKey;
+    private final String topicName;
 
-    @Getter
-    private String subscription;
-
+    @Autowired
+    private PubSubAdmin pubSubAdmin;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private TelegramGcpPubSubConfigurationProperties properties;
+
+    @Getter
+    private String subscriptionName;
 
     public abstract void process(Event<T> event);
 
@@ -52,10 +53,13 @@ public abstract class GcpPubSubSubscriber<T> {
 
     @PostConstruct
     private void initializeSubscription() {
-        List<GoogleCloudPubSubSubscription> subscriptions = properties.getSubscribe().getSubscriptions();
-        subscription = subscriptions.stream().filter(subscription -> subscription.getKey().equals(subscriptionKey))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Could not find subscription by key " + subscriptionKey))
-                .getName();
+        this.subscriptionName = topicName + "-subscription";
+        try {
+            pubSubAdmin.createSubscription(subscriptionName, topicName);
+        } catch (AlreadyExistsException ignore) {
+            log.info("Subscription for topic {} already exists.", topicName);
+        } catch (Exception e) {
+            log.error("Failed to create a subscription for topic {}. Reason: {}", topicName, e.getMessage(), e);
+        }
     }
 }

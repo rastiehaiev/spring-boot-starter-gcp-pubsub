@@ -29,7 +29,7 @@ public class TelegramGcpPubSubConfiguration {
     public void subscribe() {
         if (subscribers != null) {
             for (GcpPubSubSubscriber subscriber : subscribers) {
-                String subscription = subscriber.getSubscription();
+                String subscription = subscriber.getSubscriptionName();
                 template.subscribe(subscription, ackPubsubMessage -> {
                     try {
                         Event<?> event = subscriber.convertToEvent(ackPubsubMessage.getPubsubMessage());
