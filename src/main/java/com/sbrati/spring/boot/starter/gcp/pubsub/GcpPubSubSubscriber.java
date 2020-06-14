@@ -34,11 +34,14 @@ public abstract class GcpPubSubSubscriber<T> {
     public abstract void process(Event<T> event);
 
     protected Event<T> convertToEvent(PubsubMessage message) {
+        log.debug("PubSub message: {}", message);
         ByteString data = message.getData();
         if (data == null) {
+            log.warn("Empty data in pubsub message: {}", message);
             return null;
         }
         String valueAsString = data.toStringUtf8();
+        log.debug("Event as string: {}", valueAsString);
         try {
             Event<Map<String, Object>> mapEvent = objectMapper.readValue(valueAsString, new TypeReference<Event<Map<String, Object>>>() {
             });
@@ -58,7 +61,7 @@ public abstract class GcpPubSubSubscriber<T> {
         try {
             pubSubAdmin.createSubscription(subscriptionName, topicName);
         } catch (AlreadyExistsException ignore) {
-            log.info("Subscription for topic {} already exists.", topicName);
+            log.debug("Subscription for topic {} already exists.", topicName);
         } catch (Exception e) {
             log.error("Failed to create a subscription for topic {}. Reason: {}", topicName, e.getMessage(), e);
         }

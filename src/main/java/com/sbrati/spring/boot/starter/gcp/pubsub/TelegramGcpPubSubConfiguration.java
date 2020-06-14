@@ -33,6 +33,7 @@ public class TelegramGcpPubSubConfiguration {
                 template.subscribe(subscription, ackPubsubMessage -> {
                     try {
                         Event<?> event = subscriber.convertToEvent(ackPubsubMessage.getPubsubMessage());
+                        log.debug("Received event: {}", event);
                         if (event != null) {
                             subscriber.process(event);
                         } else {
