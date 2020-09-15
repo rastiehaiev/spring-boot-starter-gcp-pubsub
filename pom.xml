@@ -7,7 +7,7 @@
 
     <groupId>com.sbrati</groupId>
     <artifactId>spring-boot-starter-gcp-pubsub</artifactId>
-    <version>1.0.24</version>
+    <version>1.0.25</version>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -39,7 +39,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Hoxton.SR3</version>
+                <version>Hoxton.SR8</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
